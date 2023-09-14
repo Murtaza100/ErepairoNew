@@ -1,0 +1,321 @@
+version: '2.1'
+services:
+   erepairomongodb:
+      image: mongo:latest
+      container_name: erepairomongodb
+      restart: always
+      ports:
+      - 27017:27017
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   eureka-server:
+      build: eureka-server/
+      image: eureka-server:1.0
+      container_name: eurekaserver
+      restart: always
+      ports:
+      - 8761:8761
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   rabbitmq:
+      container_name: bank_rabbitmq
+      image: rabbitmq:3.8-management
+      restart: always
+      hostname: rabbitmq
+      ports:
+         - "127.0.0.2:4369:4369"
+         - 5672:5672
+         - 15672:15672
+         - 25672:25672
+      environment:
+         RABBITMQ_DEFAULT_USER: guest
+         RABBITMQ_DEFAULT_PASS: guest
+         RABBITMQ_DEFAULT_VHOST: /
+         ports: 15672:15672
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   mysql:
+    container_name: erepairomysql
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@123
+      MYSQL_DATABASE: logindb
+      MYSQL_PASSWORD: Root@123
+      MYSQL_TCP_PORT: 9096
+    network_mode: host
+    hostname: localhost
+    ports:
+      - 9096:9096
+    healthcheck:
+      test: "exit 0"
+
+   notification-service:
+      build: NotificationService/
+      image: notification-service:1.0
+      container_name: notification-service
+      restart: always
+      ports:
+      - 8083:8083
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   order-status-service:
+      build: orderStatusService/
+      image: order-status-service:1.0
+      container_name: order-status-service
+      restart: always
+      ports:
+      - 8085:8085
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   payment-service:
+      build: PaymentService/
+      image: payment-service:1.0
+      container_name: payment-service
+      restart: always
+      ports:
+      - 9092:9092
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+      
+   chat-service:
+      build: chatService/
+      image: chat-service:1.0
+      container_name: chat-service
+      restart: always
+      ports:
+      - 9093:9093
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   service-provider-service:
+      build: ServiceProviderService/
+      image: service-provider-service:1.0
+      container_name: service-provider-service
+      restart: always
+      ports:
+      - 8081:8081
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   feedback-service:
+      build: FeedbackService/
+      image: feedback-service:1.0
+      container_name: feedback-service
+      restart: always
+      ports:
+      - 8082:8082
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   user-service:
+      build: userService/
+      image: user-service:1.0
+      container_name: user-service
+      restart: always
+      ports:
+      - 9091:9091
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   user-authentication-service:
+      build: userAuthentication/
+      image: user-authentication-service:1.0
+      container_name: user-authentication-service
+      restart: always
+      ports:
+      - 9094:9094
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         mysql:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+         
+   booking-service:
+      build: BookingService/
+      image: booking-service:1.0
+      container_name: bookingservice
+      restart: always
+      ports:
+      - 9097:9097
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         erepairomongodb:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+         mysql:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   api-gateway:
+      build: api-gateway/
+      image: api-gateway:1.0
+      container_name: api-gateway
+      restart: always
+      ports:
+      - 8080:8080
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         notification-service:
+            condition: service_healthy
+         order-status-service:
+            condition: service_healthy
+         payment-service:
+            condition: service_healthy
+         chat-service:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+         feedback-service:
+            condition: service_healthy
+         service-provider-service:
+            condition: service_healthy
+         user-service:
+            condition: service_healthy
+         user-authentication-service:
+            condition: service_healthy
+         booking-service:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+      
+   config-server:
+      build: config-server/
+      image: config-server:1.0
+      container_name: config-server
+      restart: always
+      ports:
+      - 8888:8888
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+      
+   prometheus:
+      image: prom/prometheus:v2.37.1
+      container_name: prometheus
+      restart: unless-stopped
+      ports:
+        - 9090:9090
+      volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      depends_on:
+         eureka-server:
+            condition: service_healthy
+         notification-service:
+            condition: service_healthy
+         order-status-service:
+            condition: service_healthy
+         payment-service:
+            condition: service_healthy
+         chat-service:
+            condition: service_healthy
+         config-server:
+            condition: service_healthy
+         feedback-service:
+            condition: service_healthy
+         service-provider-service:
+            condition: service_healthy
+         user-service:
+            condition: service_healthy
+         user-authentication-service:
+            condition: service_healthy
+         booking-service:
+            condition: service_healthy
+         api-gateway:
+            condition: service_healthy
+      network_mode: host
+      healthcheck:
+         test: "exit 0"
+
+   grafana:
+      image: grafana/grafana-oss:8.5.2
+      container_name: grafana
+      restart: unless-stopped
+      ports:
+        - 3000:3000
+      depends_on:
+        - prometheus
+      environment:
+        - GF_SECURITY_ADMIN_USER=admin
+        - GF_SECURITY_ADMIN_PASSWORD=password
+      network_mode: host
+      healthcheck:
+         test: "exit 0"

@@ -1,0 +1,12 @@
+
+@
+java:S2629°"$Invoke method(s) only conditionally.(ø¨·×øÿÿÿÿ
+@
+java:S2629š"$Invoke method(s) only conditionally.(‰Þ¨ßúÿÿÿÿ
+;
+java:S2629ñ"$Invoke method(s) only conditionally.(ªÝü·
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(é«‹ü
+t
+java:S2139†"XEither log this exception and handle it, or rethrow it with some contextual information.(ŸÛ–Øþÿÿÿÿ
+K
+java:S2201—"/The return value of "orElseThrow" must be used.(• ñÌûÿÿÿÿ

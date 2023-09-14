@@ -1,0 +1,23 @@
+version: "3"
+services:
+  mysql-user:
+    container_name: "mysql-user"
+    image: mysql
+    hostname: localhost
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=Root@123
+      - MYSQLDB_USER=root
+      - MYSQL_DATABASE=test
+      - MYSQL_PASSWORD=mylifemyruleZ1@
+    network_mode: host
+  user-authentication-service:
+      image: user-authentication-service:1.0
+      container_name: user-authentication-service
+      ports:
+      - 9090:9090
+      depends_on:
+      - mysql-user
+      network_mode: host
+      

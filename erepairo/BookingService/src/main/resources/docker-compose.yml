@@ -1,0 +1,63 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "BOOKING_SERVICE_DB"
+    ports:
+      - '27017:27017'
+    network_mode: host
+  dbservice:
+    image: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Aayushd@1docke23
+  BOOKING_SERVICE:
+    image: bookingservice.jar
+    container_name: "BOOKING_SERVICE"
+    ports:
+      - '9097:9097'
+    depends_on:
+      - eureka-server
+      - rabbitmq
+      - mongodb
+      - dbservice
+    environment:
+      - spring.datasource.url= jdbc:mysql://localhost:3306/test?useSSL=false
+      - spring.datasource.username= root
+      - spring.datasource.password= Aayushd@123
+    network_mode: host
+  rabbitmq:
+    image: rabbitmq:3.6-management-alpine
+    container_name: "BOOKING_SERVICE_RABBITMQ"
+    ports:
+      #       The standard AMQP protocol port
+      - '5672:5672'
+      #       HTTP management UI
+      - '15672:15672'
+    environment:
+      #      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    network_mode: host
+  eureka-server:
+    image: erepairo_eureka-server
+    container_name: eureka-server
+    restart: always
+    ports:
+      - '8761:8761'
+    network_mode: "host"
+  api-gateway:
+    image: erepairo_api-gateway
+    container_name: api-gateway
+    depends_on:
+      - eureka-server
+      - BOOKING_SERVICE
+    restart: always
+    ports:
+      - '8080:8080'
+    network_mode: "host"
+    environment:
+      SPRING_PROFILES_ACTIVE: path
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://localhost:9091
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: BOOKING_SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path= /api/v1/user/**
+

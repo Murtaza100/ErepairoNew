@@ -1,0 +1,67 @@
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+      instance:
+      hostname: localhost
+
+server:
+  port: 8080
+
+
+spring:
+
+  application:
+    name: "api-gateway"
+  cloud:
+    gateway:
+      routes:
+        #Route Mapping
+        - id: SERVICE-PROVIDER-SERVICE
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/erepario/serviceprovider/**
+
+        - id: FEEDBACK_SERVICE
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/feedback/**
+
+        - id: USER_SERVICE
+          uri: http://localhost:9091/
+          predicates:
+            - Path=/api/v1/**
+
+        - id: BOOKING_SERVICE
+          uri: http://localhost:9097/
+          predicates:
+            - Path=/BookingService/**
+
+        - id: NOTIFICATION_SERVICE
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/erepairo/notifications/**
+
+        - id: PAYMENT_SERVICE
+          uri: http://localhost:9092/
+          predicates:
+            - Path=/payments/**
+
+        - id: ORDER_STATUS_SERVICE
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/orderStatus/**
+
+        - id: CHAT-SERVICE
+          uri: http://localhost:9093/
+          predicates:
+            - Path=/chat/**
+
+        - id: USER_AUTHENTICATION_SERVICE
+          uri: http://localhost:9094/
+          predicates:
+            - Path=/**
+
+

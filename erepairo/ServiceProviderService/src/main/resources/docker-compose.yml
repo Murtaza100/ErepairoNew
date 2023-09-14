@@ -1,0 +1,77 @@
+version: "3"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: serviceproviderdb
+    ports:
+      - 27017:27017
+    network_mode: host
+  service-provider-service:
+    image: serviceproviderservice:1.0
+    container_name: ServiceProvider-erepairo
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongodb
+      - eureka-server
+      - rabbitmq
+    network_mode: host
+    hostname:
+        -mongodb
+  eureka-server:
+    image: eureka-server:latest
+    container_name: eureka-server
+    network_mode: host
+    ports:
+      - 8761:8761
+  api-gateway:
+    image: erepario-apigateway:latest
+    container_name: api-gateway
+    depends_on:
+      - eureka-server
+      - service-provider-service
+    ports:
+      - 8080:8080
+    network_mode: host
+    environment:
+      SPRING_PROFILES_ACTIVE: path
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://localhost:8081
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: SERVICE-PROVIDER-SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path= /erepario/serviceprovider/**
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: "SERVICEPROVIDER-SERVICE_RABBITMQ"
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      #      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    network_mode: host
+
+  ## Prometheus
+  prometheus:
+      image: prom/prometheus:v2.37.1
+      container_name: prometheus
+      restart: unless-stopped
+      volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      ports:
+        - 9090:9090
+      depends_on:
+        - service-provider-service
+      network_mode: host
+
+  grafana:
+      image: grafana/grafana-oss:8.5.2
+      container_name: grafana
+      restart: unless-stopped
+      ports:
+        - 3000:3000
+      depends_on:
+        - prometheus
+      environment:
+        - GF_SECURITY_ADMIN_USER=admin
+        - GF_SECURITY_ADMIN_PASSWORD=password
+      network_mode: host

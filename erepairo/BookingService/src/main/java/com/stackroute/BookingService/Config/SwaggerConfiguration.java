@@ -1,0 +1,29 @@
+package com.stackroute.BookingService.Config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+
+import java.util.Collections;
+
+@Configuration
+public class SwaggerConfiguration {
+
+    @Bean
+    public Docket API() {
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any()).build();
+    }
+
+    public ApiInfo apiInfo() {
+        return new ApiInfo("Authentication Service", //title
+                "Erepairo", //description
+                "Version 1.0", //version
+                "http://localhost:8082/jobs", //terms of service URL
+                new Contact("John", "url", "john.doe@test.com"), "License of API", "opensource", Collections.emptyList()); // contact info
+    }
+}

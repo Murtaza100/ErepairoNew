@@ -1,0 +1,6 @@
+
+z
+java:S1488"_Immediately return this expression instead of assigning it to the temporary variable "apiInfo".(ÊøœÁùÿÿÿÿ
+n	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(Ä²—
+J
+java:S1874"/Remove this use of "ApiInfo"; it is deprecated.(ÊøœÁùÿÿÿÿ

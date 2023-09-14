@@ -1,0 +1,12 @@
+global:
+ scrape_interval:     10s
+ evaluation_interval: 10s
+
+
+scrape_configs:
+ - job_name: 'USER_AUTHENTICATION_SERVICE'
+   metrics_path: '/actuator/prometheus'
+   static_configs:
+     - targets: ['USER_AUTHENTICATION_SERVICE:9090']
+       labels:
+         application: 'USER_AUTHENTICATION_SERVICE Application'

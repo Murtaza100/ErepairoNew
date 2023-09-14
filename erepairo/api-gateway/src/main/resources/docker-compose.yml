@@ -1,0 +1,35 @@
+version: "3"
+services:
+  api-gateway:
+   image: api-gateway
+   container_name: api-gateway
+   restart: always
+   network_mode: host
+   hostname: localhost
+   ports:
+   - 8080:8080
+## Prometheus
+  prometheus:
+   image: prom/prometheus:v2.37.1
+   container_name: prometheus
+   restart: unless-stopped
+   volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+   ports:
+    - 9090:9090
+   depends_on:
+    - api-gateway
+   network_mode: host
+
+  grafana:
+   image: grafana/grafana-oss:8.5.2
+   container_name: grafana
+   restart: unless-stopped
+   ports:
+    - 3000:3000
+   depends_on:
+    - prometheus
+   environment:
+    - GF_SECURITY_ADMIN_USER=admin
+    - GF_SECURITY_ADMIN_PASSWORD=password
+   network_mode: host

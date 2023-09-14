@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="chatService" />
+        <module name="ServiceProviderService" />
+        <module name="userAuthentication" />
+        <module name="Aggregator" />
+        <module name="NotificationService" />
+        <module name="BookingService" />
+        <module name="eureka-server" />
+        <module name="userService" />
+        <module name="config-server" />
+        <module name="FeedbackService" />
+        <module name="api-gateway" />
+        <module name="orderStatusService" />
+        <module name="PaymentService" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="StatusService" target="11" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Aggregator" options="-parameters" />
+      <module name="BookingService" options="-parameters" />
+      <module name="FeedbackService" options="-parameters" />
+      <module name="NotificationService" options="-parameters" />
+      <module name="PaymentService" options="-parameters" />
+      <module name="ServiceProviderService" options="-parameters" />
+      <module name="StatusService" options="-parameters" />
+      <module name="api-gateway" options="-parameters" />
+      <module name="chatService" options="-parameters" />
+      <module name="config-server" options="-parameters" />
+      <module name="eureka-server" options="-parameters" />
+      <module name="orderStatusService" options="-parameters" />
+      <module name="userAuthentication" options="-parameters" />
+      <module name="userService" options="-parameters" />
+    </option>
+  </component>
+</project>

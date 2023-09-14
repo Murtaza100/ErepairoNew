@@ -1,0 +1,47 @@
+global:
+  scrape_interval:     10s
+  evaluation_interval: 10s
+
+scrape_configs:
+  - job_name: 'notification_service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8083']
+        labels:
+          application: 'Notification Service Application'
+  - job_name: 'order_status_service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8085']
+        labels:
+          application: 'Order Status Service Application'
+  - job_name: 'payment_service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:9092']
+        labels:
+          application: 'Payment Service Application'
+  - job_name: 'chat_service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:9093']
+        labels:
+          application: 'Chat Service Application'
+  - job_name: 'api_gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8080']
+        labels:
+          application: 'Api gateway'
+  - job_name: 'eureka_server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8761']
+        labels:
+          application: 'Eureka server'
+  - job_name: 'config_server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['localhost:8888']
+        labels:
+          application: 'Config server'

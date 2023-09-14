@@ -1,0 +1,9 @@
+
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ÎãÆ€
+@
+java:S1165	"%Make this "resourceName" field final.(å°·çþÿÿÿÿ
+8
+java:S1165
+""Make this "fieldName" field final.(”ë¶«
+9
+java:S1165"#Make this "fieldValue" field final.(Û€ž€

@@ -1,0 +1,108 @@
+version: "2.1"
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "USER_SERVICE_DB"
+    ports:
+      - '27017:27017'
+    network_mode: host
+    healthcheck:
+      test: "exit 0"
+
+  config-server:
+    image: config-server:1.0
+    container_name: config-server
+    depends_on:
+      - eureka-server
+    restart: always
+    ports:
+      - 8888:8888
+    network_mode: "host"
+    healthcheck:
+      test: "exit 0"
+
+  USER_SERVICE:
+    image: user-service:1.0
+    container_name: "USER_SERVICE-erepairo"
+    ports:
+      - '9091:9091'
+    depends_on:
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    network_mode: host
+    healthcheck:
+      test: "exit 0"
+
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    container_name: "USER_SERVICE_RABBITMQ"
+    ports:
+#       The standard AMQP protocol port
+      - '5672:5672'
+#       HTTP management UI
+      - '15672:15672'
+    environment:
+#      AMQP_URL: 'amqp://rabbitmq?connection_attempts=5&retry_delay=5'
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    network_mode: host
+    healthcheck:
+      test: "exit 0"
+
+  eureka-server:
+    image: eureka-server:1.0
+    container_name: eureka-server
+    restart: always
+    ports:
+      - '8761:8761'
+    network_mode: "host"
+    healthcheck:
+      test: "exit 0"
+
+  api-gateway:
+    image: api-gateway:1.0
+    container_name: api-gateway
+    depends_on:
+      - eureka-server
+      - USER_SERVICE
+    restart: always
+    ports:
+      - '8080:8080'
+    network_mode: "host"
+    environment:
+      SPRING_PROFILES_ACTIVE: path
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_URI: http://localhost:9091
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_ID: USER_SERVICE
+      SPRING_CLOUD_GATEWAY_ROUTES[0]_PREDICATES[0]: Path= /api/v1/user/**
+
+  ## Prometheus
+  prometheus:
+    image: prom/prometheus:v2.37.1
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - USER_SERVICE
+    network_mode: host
+
+  grafana:
+    image: grafana/grafana-oss:8.5.2
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    network_mode: host
